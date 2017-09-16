@@ -25,7 +25,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.dkvz.BlogAuthoring.controllers.MainFrameController">
    <top>
       <VBox>
          <children>
@@ -33,7 +33,7 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Quit">
+                    <MenuItem mnemonicParsing="false" onAction="#menuItemQuitAction" text="Quit">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
@@ -42,7 +42,7 @@
                 </Menu>
                   <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Search">
+                      <MenuItem mnemonicParsing="false" onAction="#menuItemSearchAction" text="Search">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
@@ -53,24 +53,24 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                <Button mnemonicParsing="false" text="Save">
+                <Button fx:id="buttonSave" mnemonicParsing="false" onAction="#buttonSaveAction" text="Save">
                      <graphic>
                         <FontAwesomeIconView glyphName="SAVE" size="20" />
                      </graphic></Button>
-                  <ToggleButton mnemonicParsing="false" text="Published">
+                  <ToggleButton fx:id="toggleButtonPublished" mnemonicParsing="false" onAction="#toggleButtonPublishedAction" text="Published">
                      <graphic>
                         <FontAwesomeIconView glyphName="CLOUD_UPLOAD" size="20" />
                      </graphic></ToggleButton>
                   <Separator orientation="VERTICAL" />
-                  <Button mnemonicParsing="false" text="Image">
+                  <Button fx:id="buttonImage" mnemonicParsing="false" onAction="#buttonImageAction" text="Image">
                      <graphic>
                         <FontAwesomeIconView glyphName="FILE_IMAGE_ALT" size="20" />
                      </graphic></Button>
-                  <Button mnemonicParsing="false" text="Quote">
+                  <Button fx:id="buttonQuote" mnemonicParsing="false" onAction="#buttonQuoteAction" text="Quote">
                      <graphic>
                         <FontAwesomeIconView glyphName="COMMENT_ALT" size="20" />
                      </graphic></Button>
-                  <Button mnemonicParsing="false" text="Code">
+                  <Button fx:id="buttonCode" mnemonicParsing="false" onAction="#buttonCodeAction" text="Code">
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
@@ -95,7 +95,7 @@
         <items>
             <VBox maxWidth="-Infinity" prefWidth="350.0">
                <children>
-                  <ListView VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="listViewArticles" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox>
@@ -114,18 +114,18 @@
                     </rowConstraints>
                      <children>
                         <Label text="Title:" />
-                        <TextField prefWidth="400.0" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Tags..." GridPane.columnIndex="2" GridPane.columnSpan="2" />
+                        <TextField fx:id="textFieldTitle" prefWidth="400.0" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+                        <Button fx:id="buttonTags" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#buttonTagsAction" text="Tags..." GridPane.columnIndex="2" GridPane.columnSpan="2" />
                         <Label text="Thumb image:" GridPane.rowIndex="1" />
-                        <TextField GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="textFieldThumbImage" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets top="2.0" />
                            </GridPane.margin>
                         </TextField>
                         <Label text="User ID:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                        <TextField text="1" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <TextField fx:id="textFieldUserID" text="1" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <Label text="Article URL:" GridPane.rowIndex="2" />
-                        <TextField GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+                        <TextField fx:id="textFieldArticleURL" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
                      </children>
                      <padding>
                         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -135,12 +135,12 @@
                     <panes>
                       <TitledPane animated="false" text="Article Summary">
                            <content>
-                              <TextArea />
+                              <TextArea fx:id="textAreaArticleSummary" />
                            </content>
                       </TitledPane>
                     </panes>
                   </Accordion>
-                  <TextArea maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                  <TextArea fx:id="textAreaArticle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
         </items>
