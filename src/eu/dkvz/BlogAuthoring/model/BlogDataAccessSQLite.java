@@ -64,7 +64,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
 
     @Override
     public List<ArticleSummary> getArticleSummariesDescFromTo(long start, int count, String tags) throws SQLException {
-        List<ArticleSummary> res = new ArrayList<ArticleSummary>();
+        List<ArticleSummary> res = new ArrayList<>();
         if (start < 0) {
             start = 0;
         }
@@ -257,8 +257,23 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
     }
 
     @Override
-    public Article getArticleById(long id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Article getArticleById(long id, boolean tags) throws SQLException {
+        Article ret = null;
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT articles.*, users.name FROM articles, users WHERE articles.id = ? AND (users.id = articles.user_id)")) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                ret = new Article();
+                ret.getArticleSummary().setTitle(rs.getString("title"));
+                ret.getArticleSummary().setAuthor(rs.getString("name"));
+                User usr = new User();
+                usr.setId(rs.getLong("user_id"));
+                usr.setName(ret.getArticleSummary().getAuthor());
+                ret.getArticleSummary().setUser(usr);
+                
+            }
+        }
+        return ret;
     }
 
     @Override

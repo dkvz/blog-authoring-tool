@@ -22,6 +22,7 @@ public class ArticleSummary {
 	private Date date;
 	private String summary;
 	private String author;
+        private User user;
 	private long commentsCount = 0;
 	
 	public ArticleSummary() {
@@ -117,5 +118,19 @@ public class ArticleSummary {
 		res.put("tags", this.getTags());
 		return res;
 	}
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
 	
 }
