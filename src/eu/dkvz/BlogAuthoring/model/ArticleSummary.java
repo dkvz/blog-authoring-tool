@@ -24,6 +24,7 @@ public class ArticleSummary {
 	private String author;
         private User user;
 	private long commentsCount = 0;
+        private boolean published;
 	
 	public ArticleSummary() {
 		this.tags = new ArrayList<ArticleTag>();
@@ -131,6 +132,20 @@ public class ArticleSummary {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * @return the published
+     */
+    public boolean isPublished() {
+        return published;
+    }
+
+    /**
+     * @param published the published to set
+     */
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 	
 }

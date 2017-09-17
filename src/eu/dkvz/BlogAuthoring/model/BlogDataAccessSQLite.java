@@ -147,6 +147,11 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         sum.setArticleURL(rset.getString("article_url"));
         sum.setThumbImage(rset.getString("thumb_image"));
         sum.setTitle(rset.getString("title"));
+        if (rset.getInt("published") > 0) {
+            sum.setPublished(true);
+        } else {
+            sum.setPublished(false);
+        }
         // Get the tags.
         List<ArticleTag> artTags = new ArrayList<>();
         try {
@@ -264,18 +269,14 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
     @Override
     public Article getArticleById(long id) throws SQLException {
         Article ret = null;
-        try (PreparedStatement stmt = connection.prepareStatement("SELECT articles.*, users.name FROM articles, users WHERE articles.id = ? AND (users.id = articles.user_id)")) {
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM articles WHERE id = ?")) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                ArticleSummary sum = this.getArticleSummaryFromRset(rs, connection);
                 ret = new Article();
-                ret.getArticleSummary().setTitle(rs.getString("title"));
-                ret.getArticleSummary().setAuthor(rs.getString("name"));
-                User usr = new User();
-                usr.setId(rs.getLong("user_id"));
-                usr.setName(ret.getArticleSummary().getAuthor());
-                ret.getArticleSummary().setUser(usr);
-                
+                ret.setArticleSummary(sum);
+                ret.setContent(rs.getString("content"));
             }
         }
         return ret;
