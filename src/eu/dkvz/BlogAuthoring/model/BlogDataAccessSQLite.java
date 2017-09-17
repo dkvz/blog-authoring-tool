@@ -114,6 +114,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         ArticleSummary sum = new ArticleSummary();
         // Get the author:
         String author = "Anonymous";
+        User usr = null;
         try {
             PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
             st.setInt(1, rset.getInt("user_id"));
@@ -121,6 +122,9 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
             ResultSet usrSet = st.executeQuery();
             if (usrSet.next()) {
                 author = usrSet.getString("name");
+                usr = new User();
+                usr.setName(author);
+                usr.setId(usrSet.getInt("id"));
             }
             st.close();
         } catch (SQLException ex) {
@@ -128,6 +132,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
             ex.printStackTrace();
         }
         sum.setAuthor(author);
+        sum.setUser(usr);
         sum.setId(rset.getLong("id"));
         // Find comment count:
         long comCount = this.getCommentCount(sum.getId());
@@ -257,7 +262,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
     }
 
     @Override
-    public Article getArticleById(long id, boolean tags) throws SQLException {
+    public Article getArticleById(long id) throws SQLException {
         Article ret = null;
         try (PreparedStatement stmt = connection.prepareStatement("SELECT articles.*, users.name FROM articles, users WHERE articles.id = ? AND (users.id = articles.user_id)")) {
             stmt.setLong(1, id);
