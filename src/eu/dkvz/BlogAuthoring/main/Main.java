@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package eu.dkvz.BlogAuthoring.main;
+
 import java.io.IOException;
 import javafx.application.*;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.stage.*;
 import javafx.scene.*;
 import java.sql.*;
 import javafx.scene.control.*;
+import eu.dkvz.BlogAuthoring.utils.*;
 
 /**
  *
@@ -22,29 +24,20 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         try {
             AppConfig.getInstance().connectDatabase();
-            if (AppConfig.getInstance().getDatabase().isConnected()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Database connected", ButtonType.OK);
-                alert.setHeaderText("");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Database not connected", ButtonType.OK);
-                alert.setHeaderText("");
-                alert.showAndWait();
+            if (!AppConfig.getInstance().getDatabase().isConnected()) {
+                UIUtils.errorAlert("Could not connect the database.", "Database error");
+                this.exitProgramError();
             }
         } catch (SQLException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "SQLException: " + ex.getMessage(), ButtonType.OK);
-            alert.setHeaderText("");
-            alert.showAndWait();
+            UIUtils.errorAlert("SQL error loading the database: " + ex.getMessage(), "Database error");
             this.exitProgramError();
         } catch (IOException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "The database file was not found.", ButtonType.OK);
-            alert.setHeaderText("");
-            alert.showAndWait();
+            UIUtils.errorAlert("The database file could not be found.", "Database error");
             this.exitProgramError();
         }
         Parent root = FXMLLoader.load(getClass().getResource("/eu/dkvz/BlogAuthoring/views/MainFrame.fxml"));        
         Scene scene = new Scene(root);
-        stage.setTitle("Blog Authoring Thingy");
+        stage.setTitle(AppConfig.APP_TITLE);
         stage.setScene(scene);
         stage.show();
         stage.centerOnScreen();

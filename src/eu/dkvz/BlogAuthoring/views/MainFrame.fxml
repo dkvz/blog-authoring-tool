@@ -53,10 +53,20 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
+                  <Button fx:id="buttonNewArticle" mnemonicParsing="false" onAction="#buttonNewArticleAction" text="New">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="PENCIL" size="20" />
+                     </graphic>
+                  </Button>
                 <Button fx:id="buttonSave" mnemonicParsing="false" onAction="#buttonSaveAction" text="Save">
                      <graphic>
                         <FontAwesomeIconView glyphName="SAVE" size="20" />
                      </graphic></Button>
+                  <Button fx:id="buttonReload" mnemonicParsing="false" onAction="#buttonReloadAction" text="Reload Article">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="REFRESH" size="20" />
+                     </graphic>
+                  </Button>
                   <ToggleButton fx:id="toggleButtonPublished" mnemonicParsing="false" onAction="#toggleButtonPublishedAction" text="Published">
                      <graphic>
                         <FontAwesomeIconView glyphName="CLOUD_UPLOAD" size="20" />
@@ -74,6 +84,11 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
+                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="WARNING" size="20" />
+                     </graphic>
+                  </Button>
               </items>
             </ToolBar>
          </children>
@@ -82,8 +97,8 @@
    <bottom>
       <HBox spacing="15.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Status message" />
-            <ProgressBar maxWidth="1.7976931348623157E308" minWidth="-Infinity" progress="0.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="labelStatus" text="Status message" />
+            <ProgressBar fx:id="progressBarMain" maxWidth="1.7976931348623157E308" minWidth="-Infinity" progress="0.0" HBox.hgrow="ALWAYS" />
          </children>
          <padding>
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -98,7 +113,7 @@
                   <ListView fx:id="listViewArticles" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox>
+            <VBox fx:id="vBoxArticleForm">
                <children>
                   <GridPane hgap="4.0">
                     <columnConstraints>

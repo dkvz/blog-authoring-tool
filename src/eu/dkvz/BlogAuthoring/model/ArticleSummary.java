@@ -10,10 +10,6 @@ import java.util.*;
 
 public class ArticleSummary {
 	
-	/**
-	 * This is an imaginary ID, ordered from 1 to X
-	 * to serve as an abstract ordering mechanism for the articles.
-	 */
 	private long id = -1;
 	private String title;
 	private String thumbImage;
@@ -146,6 +142,15 @@ public class ArticleSummary {
      */
     public void setPublished(boolean published) {
         this.published = published;
+    }
+    
+    @Override
+    public String toString() {
+        if (this.getTitle() != null) {
+            return this.getTitle();
+        } else {
+            return "Untitled article";
+        }
     }
 	
 }

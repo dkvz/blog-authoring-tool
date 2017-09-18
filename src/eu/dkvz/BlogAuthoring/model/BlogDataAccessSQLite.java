@@ -87,7 +87,11 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         } else {
             sql = sql.concat("WHERE articles.published = '1' ");
         }
-        sql = sql.concat("ORDER BY articles.id DESC LIMIT ? OFFSET ?");
+        if (count < 1) {
+            sql = sql.concat("ORDER BY articles.id DESC");
+        } else {
+            sql = sql.concat("ORDER BY articles.id DESC LIMIT ? OFFSET ?");
+        }
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         int pos = 0;
@@ -96,8 +100,10 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
                 stmt.setString(pos + 1, tagsA[pos]);
             }
         }
-        stmt.setInt(pos + 1, count); // LIMIT clause value
-        stmt.setLong(pos + 2, start); // OFFSET is start
+        if (count >= 1) {
+            stmt.setInt(pos + 1, count); // LIMIT clause value
+            stmt.setLong(pos + 2, start); // OFFSET is start
+        }
         ResultSet rset = stmt.executeQuery();
         if (rset != null) {
             // For SQLite the date is an integer (or a long I suppose).
@@ -129,7 +135,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
             st.close();
         } catch (SQLException ex) {
             // Do nothing, author already set to Anonymous by default.
-            ex.printStackTrace();
+            System.err.println("Subquery error parsing article: ".concat(ex.getMessage()));
         }
         sum.setAuthor(author);
         sum.setUser(usr);
@@ -278,6 +284,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
                 ret.setArticleSummary(sum);
                 ret.setContent(rs.getString("content"));
             }
+            rs.close();
         }
         return ret;
     }

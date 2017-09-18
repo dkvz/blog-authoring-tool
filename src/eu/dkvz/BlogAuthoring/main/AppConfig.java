@@ -8,6 +8,7 @@ package eu.dkvz.BlogAuthoring.main;
 import eu.dkvz.BlogAuthoring.model.*;
 import java.io.*;
 import java.sql.*;
+import eu.dkvz.BlogAuthoring.utils.*;
 
 /**
  *
@@ -17,6 +18,7 @@ public class AppConfig {
     
     private static final AppConfig INSTANCE = new AppConfig();
     public static final String DB_PATH = "db.sqlite";
+    public static final String APP_TITLE = "Blog Authoring Thingy";
     
     private BlogDataAccess database = null;
     
