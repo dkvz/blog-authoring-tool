@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import eu.dkvz.BlogAuthoring.model.*;
 import eu.dkvz.BlogAuthoring.utils.UIUtils;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -64,6 +65,8 @@ public class MainFrameController implements Initializable {
     private Label labelStatus;
     @FXML
     private ProgressBar progressBarMain;
+    @FXML
+    private CheckMenuItem checkMenuItemWordWrap;
     
     //private DisplayedArticle displayedArticle;
     private ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
@@ -90,32 +93,39 @@ public class MainFrameController implements Initializable {
         this.buttonQuote.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonCode.disableProperty().bind(this.displayedArticle.isNull());
         this.selectedArticle.bind(this.listViewArticles.getSelectionModel().selectedItemProperty());
+        
+        // Bind the word wrap thingy:
+        this.textAreaArticle.wrapTextProperty().bind(this.checkMenuItemWordWrap.selectedProperty());
+        this.textAreaArticleSummary.wrapTextProperty().bind(this.checkMenuItemWordWrap.selectedProperty());
+        
         this.selectedArticle.addListener((ObservableValue<? extends ArticleSummary> obsValue, 
                 ArticleSummary oldVal, ArticleSummary newVal) -> {
             if (!this.ignoreNextListSelection) {
-            // We should ask for confirmation if:
-            // - oldVal is not null
-            // - newVal is different (check the id)
-            // - We have used one of the text fields since the last loading of them
-            //   -> Which is a problem because the article text and summary
-            //   are not in the list anywhere.
-            if ((oldVal != null && newVal != null)
-                    && (oldVal.getId() != newVal.getId())
-                    && this.isModified()) {
-                if (!UIUtils.confirmDialog("Loading another article will cancel all the "
-                        + "modifications you were doing. Are you sure?\n"
-                        + "This operation cannot be undone.", "Cancel modifications?")) {
-                    // Because of this thing I should've used an acutal event listener.
-                    //this.listViewArticles.getSelectionModel().clearSelection();
-                    //this.listViewArticles.getSelectionModel().select(oldVal);
-                    this.ignoreNextListSelection = true;
-                    this.listViewArticles.getSelectionModel().clearSelection();
-                    //this.listViewArticles.getSelectionModel().select(oldVal);
-                    return;
+                // We should ask for confirmation if:
+                // - oldVal is not null
+                // - newVal is different (check the id)
+                // - We have used one of the text fields since the last loading of them
+                //   -> Which is a problem because the article text and summary
+                //   are not in the list anywhere.
+                if ((oldVal != null && newVal != null)
+                        && (oldVal.getId() != newVal.getId())
+                        && this.isModified()) {
+                    if (!UIUtils.confirmDialog("Loading another article will cancel all the "
+                            + "modifications you were doing. Are you sure?\n"
+                            + "This operation cannot be undone.", "Cancel modifications?")) {
+                        // Because of this thing I should've used an acutal event listener.
+                        Platform.runLater(() -> {
+                            // This produces weird exceptions if not run in that thread.
+                            this.ignoreNextListSelection = true;
+                            //this.listViewArticles.getSelectionModel().clearSelection();
+                            this.listViewArticles.getSelectionModel().select(oldVal);
+                        });
+
+                        return;
+                    }
                 }
-            }
-            // Actually load the article:
-            this.loadSelectedArticle();
+                // Actually load the article:
+                this.loadSelectedArticle();
             } else {
                 this.ignoreNextListSelection = false;
             }
@@ -139,12 +149,14 @@ public class MainFrameController implements Initializable {
                     this.textFieldTitle.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummary().titleProperty());
                     this.textAreaArticle.textProperty().bindBidirectional(this.displayedArticle.get().contentProperty());
                     this.textAreaArticleSummary.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummaryProperty().summaryProperty());
+                    this.toggleButtonPublished.setSelected(this.displayedArticle.get().getArticleSummary().isPublished());
                     
                     // Set the bindings to the modified state if not done yet.
                     if (!this.isModifiedBindingsSet()) {
                         this.setModifiedBindings();
                     }
                     this.setModified(false);
+                    this.labelStatus.setText("Loaded article " + Long.toString(art.getArticleSummary().getId()));
                 }
             } catch (SQLException ex) {
                 UIUtils.errorAlert("Database error reading article - " + ex.getMessage(), "Database error");
@@ -223,12 +235,21 @@ public class MainFrameController implements Initializable {
         // in the bindings for new articles. I have to set the value manually.
         UIUtils.infoAlert("Title is: " + this.displayedArticle.getValue().getArticleSummary().getTitle(), "lel");
         
+        // We need different behavior if this is a new article:
+        if (this.isNewArticle()) {
+            
+            this.setNewArticle(false);
+        } else {
+            
+        }
+        
         this.setModified(false);
     }
     
     @FXML
     private void toggleButtonPublishedAction(ActionEvent event) {
-        
+        // Changing published won't do anything if we don't save at the moment.
+        this.displayedArticle.get().getArticleSummary().setPublished(this.toggleButtonPublished.isSelected());
     }
     
     @FXML
@@ -300,24 +321,42 @@ public class MainFrameController implements Initializable {
                 return;
             }
         }
+        this.progressBarMain.setProgress(0.2);
+        this.setNewArticle(true);
         // Clear everything up:
         this.displayedArticle.set(new ArticleProperty());
+        this.listViewArticles.getSelectionModel().clearSelection();
+        this.clearAllFields();
         // If I want to do crazy bindings to an actual Article object I need to inherit the thing but
         // override EVERY SINGLE get/set method.
         // Still I'm probably going to do it.
         // We could use bidirectionnal bindings here. But for the sake of whatever the sake is I'm doing
         // it unidirectionnal.
+        this.progressBarMain.setProgress(0.4);
         this.displayedArticle.get().getArticleSummary().articleURLProperty().bind(this.textFieldArticleURL.textProperty());
         this.displayedArticle.get().getArticleSummary().thumbImageProperty().bind(this.textFieldThumbImage.textProperty());
         this.displayedArticle.get().getArticleSummary().titleProperty().bind(this.textFieldTitle.textProperty());
         this.displayedArticle.get().contentProperty().bind(this.textAreaArticle.textProperty());
         this.displayedArticle.get().getArticleSummaryProperty().summaryProperty().bind(this.textAreaArticleSummary.textProperty());
-        
+        this.toggleButtonPublished.setSelected(false);
+        this.progressBarMain.setProgress(0.8);
         if (!this.isModifiedBindingsSet()) {
             this.setModifiedBindings();
             this.setModifiedBindingsSet(true);
         }
+        this.progressBarMain.setProgress(0.9);
         this.setModified(false);
+        this.progressBarMain.setProgress(0.0);
+        this.labelStatus.setText("Editing new article");
+    }
+    
+    private void clearAllFields() {
+        this.textAreaArticle.clear();
+        this.textAreaArticleSummary.clear();
+        this.textFieldArticleURL.clear();
+        this.textFieldThumbImage.clear();
+        this.textFieldTitle.clear();
+        this.textFieldUserID.clear();
     }
 
     /**
