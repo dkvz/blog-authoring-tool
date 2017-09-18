@@ -9,14 +9,16 @@ import eu.dkvz.BlogAuthoring.model.*;
 import javafx.beans.property.*;
 
 /**
- *
+ * This class is not a property in the JavaFX sense
+ * It has JavaFX properties though
+ * 
  * @author Alain
  */
 public class ArticleProperty extends Article {
     
     private final ArticleSummaryProperty articleSummaryProperty;
-    private final StringProperty contentProperty = new SimpleStringProperty();
-
+    private final StringProperty content = new SimpleStringProperty();
+    
     public ArticleProperty() {
         articleSummaryProperty = new ArticleSummaryProperty();
     }
@@ -41,12 +43,12 @@ public class ArticleProperty extends Article {
     
     @Override
     public final String getContent() {
-        return this.contentProperty.get();
+        return this.content.get();
     }
     
     @Override
     public final void setContent(String content) {
-        this.contentProperty.set(content);
+        this.content.set(content);
         super.setContent(content);
     }
     
@@ -54,7 +56,7 @@ public class ArticleProperty extends Article {
      * @return the contentProperty
      */
     public StringProperty contentProperty() {
-        return contentProperty;
+        return content;
     }
     
     @Override
@@ -65,7 +67,5 @@ public class ArticleProperty extends Article {
             return "Untitled article";
         }
     }
-    
-    
     
 }

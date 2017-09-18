@@ -152,5 +152,23 @@ public class ArticleSummary {
             return "Untitled article";
         }
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ArticleSummary) {
+            if (((ArticleSummary) other).id == this.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 73 * hash + Objects.hashCode(this.title);
+        return hash;
+    }
 	
 }

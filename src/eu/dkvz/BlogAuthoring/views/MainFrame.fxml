@@ -25,7 +25,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.dkvz.BlogAuthoring.controllers.MainFrameController">
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.dkvz.BlogAuthoring.controllers.MainFrameController">
    <top>
       <VBox>
          <children>
@@ -108,7 +108,7 @@
    <center>
       <SplitPane dividerPositions="0.2993311036789298" BorderPane.alignment="CENTER">
         <items>
-            <VBox maxWidth="-Infinity" prefWidth="350.0">
+            <VBox maxWidth="-Infinity" prefWidth="300.0">
                <children>
                   <ListView fx:id="listViewArticles" VBox.vgrow="ALWAYS" />
                </children>

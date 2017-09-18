@@ -9,7 +9,9 @@ import eu.dkvz.BlogAuthoring.model.*;
 import javafx.beans.property.*;
 
 /**
- *
+ * This class is not a property in the JavaFX sense
+ * It has JavaFX properties though
+ * 
  * @author Alain
  */
 public class ArticleSummaryProperty extends ArticleSummary {

@@ -73,7 +73,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         // not most other databases.
         String sql = "SELECT articles.id, articles.title, "
                 + "articles.article_url, articles.thumb_image, articles.date, "
-                + "articles.user_id, articles.summary FROM articles ";
+                + "articles.user_id, articles.summary, articles.published FROM articles ";
         String[] tagsA = null;
         if (tags != null && !tags.isEmpty()) {
             sql = sql.concat(", article_tags, tags WHERE articles.published = '1'");
