@@ -23,8 +23,9 @@ public abstract class BlogDataAccess {
     public abstract long getCommentCount(long articleID) throws SQLException;
     public abstract long getArticleCount(boolean published, String tags) throws SQLException;
     public abstract Article getArticleById(long id) throws SQLException;
-    public abstract void insertArticle(Article article) throws SQLException;
-    public abstract void updateArticle(Article article) throws SQLException;
-    public abstract void deleteArticleById(long id) throws SQLException;
+    public abstract boolean insertArticle(Article article) throws SQLException;
+    public abstract boolean updateArticle(Article article) throws SQLException;
+    public abstract boolean deleteArticleById(long id) throws SQLException;
+    public abstract List<ArticleTag> getTagsForArticle(long id) throws SQLException;
     
 }

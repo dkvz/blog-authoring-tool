@@ -77,6 +77,11 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CLOUD_UPLOAD" size="20" />
                      </graphic></ToggleButton>
+                  <Button fx:id="buttonDeleteArticle" mnemonicParsing="false" onAction="#buttonDeleteArticleAction" text="Delete Article">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="REMOVE" size="20" />
+                     </graphic>
+                  </Button>
                   <Separator orientation="VERTICAL" />
                   <Button fx:id="buttonImage" mnemonicParsing="false" onAction="#buttonImageAction" text="Image">
                      <graphic>
@@ -90,7 +95,7 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
-                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME">
+                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="false">
                      <graphic>
                         <FontAwesomeIconView glyphName="WARNING" size="20" />
                      </graphic>
@@ -135,7 +140,7 @@
                     </rowConstraints>
                      <children>
                         <Label text="Title:" />
-                        <TextField fx:id="textFieldTitle" prefWidth="400.0" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+                        <TextField fx:id="textFieldTitle" prefWidth="400.0" GridPane.columnIndex="1" />
                         <Button fx:id="buttonTags" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#buttonTagsAction" text="Tags..." GridPane.columnIndex="2" GridPane.columnSpan="2" />
                         <Label text="Thumb image:" GridPane.rowIndex="1" />
                         <TextField fx:id="textFieldThumbImage" GridPane.columnIndex="1" GridPane.rowIndex="1">

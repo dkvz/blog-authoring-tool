@@ -7,6 +7,7 @@ package eu.dkvz.BlogAuthoring.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ArticleTag {
 
@@ -36,6 +37,22 @@ public class ArticleTag {
 
     public void setMainTag(boolean mainTag) {
         this.mainTag = mainTag;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ArticleTag) {
+            return (((ArticleTag) other).getId() == this.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
     }
 
     public Map<String, Object> toMap() {

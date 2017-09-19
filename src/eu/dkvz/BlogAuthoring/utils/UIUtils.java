@@ -21,6 +21,13 @@ public final class UIUtils {
         alert.showAndWait();
     }
     
+    public static void warningAlert(String message, String title) {
+        Alert alert = new Alert(Alert.AlertType.WARNING, message, ButtonType.OK);
+        alert.setTitle(title);
+        alert.setHeaderText("");
+        alert.showAndWait();
+    }
+    
     public static void infoAlert(String message, String title) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
         alert.setTitle(title);

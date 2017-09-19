@@ -5,13 +5,13 @@
  */
 package eu.dkvz.BlogAuthoring.main;
 
+import eu.dkvz.BlogAuthoring.controllers.*;
 import java.io.IOException;
 import javafx.application.*;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.*;
 import javafx.scene.*;
 import java.sql.*;
-import javafx.scene.control.*;
 import eu.dkvz.BlogAuthoring.utils.*;
 
 /**
@@ -35,8 +35,14 @@ public class Main extends Application {
             UIUtils.errorAlert("The database file could not be found.", "Database error");
             this.exitProgramError();
         }
-        Parent root = FXMLLoader.load(getClass().getResource("/eu/dkvz/BlogAuthoring/views/MainFrame.fxml"));        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/eu/dkvz/BlogAuthoring/views/MainFrame.fxml"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
+        stage.setOnCloseRequest((e) -> {
+            MainFrameController controller = loader.getController();
+            e.consume();
+            controller.requestExit();
+        });
         stage.setTitle(AppConfig.APP_TITLE);
         stage.setScene(scene);
         stage.show();
