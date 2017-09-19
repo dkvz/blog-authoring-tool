@@ -6,7 +6,9 @@
 package eu.dkvz.BlogAuthoring.controllers;
 
 import eu.dkvz.BlogAuthoring.model.*;
+import java.util.List;
 import javafx.beans.property.*;
+import javafx.collections.*;
 
 /**
  * This class is not a property in the JavaFX sense
@@ -27,6 +29,8 @@ public class ArticleSummaryProperty extends ArticleSummary {
     // Leaving User as it is as well.
     // Leaving commentsCount out, not used in our app ATM.
     private final BooleanProperty publishedProperty = new SimpleBooleanProperty();
+    // I need the tags as an observable list:
+    private final ListProperty<ArticleTag> tags = new SimpleListProperty();
     
     public ArticleSummaryProperty() {
         super();
@@ -42,7 +46,7 @@ public class ArticleSummaryProperty extends ArticleSummary {
         this.setId(sum.getId());
         this.setPublished(sum.isPublished());
         this.setSummary(sum.getSummary());
-        super.setTags(sum.getTags());
+        this.setTags(sum.getTags());
         this.setThumbImage(sum.getThumbImage());
         this.setTitle(sum.getTitle());
         super.setUser(sum.getUser());
@@ -145,6 +149,20 @@ public class ArticleSummaryProperty extends ArticleSummary {
      */
     public BooleanProperty publishedProperty() {
         return publishedProperty;
+    }
+    
+    @Override
+    public final List<ArticleTag> getTags() {
+        return this.tags;
+    }
+    
+    @Override
+    public final void setTags(List<ArticleTag> tags) {
+        this.tags.set(FXCollections.observableList(tags));
+    }
+    
+    public ListProperty<ArticleTag> tagsProperty() {
+        return this.tags;
     }
     
 }

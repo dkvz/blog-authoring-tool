@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import eu.dkvz.BlogAuthoring.model.*;
 
 /**
  * FXML Controller class
@@ -31,9 +32,9 @@ public class TagsFrameController implements Initializable {
     @FXML
     private Button buttonCancel;
     @FXML
-    private ListView<?> listTags;
+    private ListView<ArticleTag> listTags;
     @FXML
-    private ListView<?> listArticleTags;
+    private ListView<ArticleTag> listArticleTags;
 
     /**
      * Initializes the controller class.
@@ -62,5 +63,19 @@ public class TagsFrameController implements Initializable {
     @FXML
     private void buttonCancelAction(ActionEvent event) {
     }
-    
+
+    /**
+     * @return the listTags
+     */
+    public ListView<ArticleTag> getListTags() {
+        return listTags;
+    }
+
+    /**
+     * @return the listArticleTags
+     */
+    public ListView<ArticleTag> getListArticleTags() {
+        return listArticleTags;
+    }
+
 }

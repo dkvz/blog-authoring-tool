@@ -67,5 +67,10 @@ public class ArticleTag {
         }
         return res;
     }
+    
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 
 }

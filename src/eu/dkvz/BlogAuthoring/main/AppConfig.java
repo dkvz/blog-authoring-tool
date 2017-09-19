@@ -8,7 +8,7 @@ package eu.dkvz.BlogAuthoring.main;
 import eu.dkvz.BlogAuthoring.model.*;
 import java.io.*;
 import java.sql.*;
-import eu.dkvz.BlogAuthoring.utils.*;
+import javafx.stage.*;
 
 /**
  *
@@ -20,6 +20,7 @@ public class AppConfig {
     public static final String DB_PATH = "db.sqlite";
     public static final String APP_TITLE = "Blog Authoring Thingy";
     
+    private Stage primaryStage = null;
     private BlogDataAccess database = null;
     
     private AppConfig() {
@@ -55,6 +56,20 @@ public class AppConfig {
         } else {
             throw new SQLException("Database connection has not been initialized");
         }
+    }
+
+    /**
+     * @return the primaryStage
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * @param primaryStage the primaryStage to set
+     */
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
     
 }

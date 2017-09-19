@@ -47,6 +47,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
         stage.centerOnScreen();
+        AppConfig.getInstance().setPrimaryStage(stage);
     }
     
     public void exitProgramError() {

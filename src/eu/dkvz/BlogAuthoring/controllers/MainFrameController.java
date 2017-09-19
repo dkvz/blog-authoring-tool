@@ -13,15 +13,17 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import eu.dkvz.BlogAuthoring.model.*;
 import eu.dkvz.BlogAuthoring.utils.UIUtils;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.*;
 import javafx.collections.*;
+import javafx.scene.*;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  *
@@ -78,6 +80,7 @@ public class MainFrameController implements Initializable {
     private final BooleanProperty modified = new SimpleBooleanProperty();
     private boolean ignoreNextListSelection = false;
     private final BooleanProperty mandatoryFieldsNotFilled = new SimpleBooleanProperty();
+    private Stage tagsWindow = null;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -359,7 +362,49 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonTagsAction(ActionEvent event) {
-        
+        // I wanted to make a window that could stay up and have bindings auto-update
+        // the tags in it but I think I'm just going to use a modal dialog.
+        if (this.displayedArticle.get() != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass()
+                        .getResource("/eu/dkvz/BlogAuthoring/views/TagsFrame.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                scene.cursorProperty().set(Cursor.WAIT);
+                stage.initOwner(AppConfig.getInstance().getPrimaryStage());
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Edit Article Tags");
+                TagsFrameController tagsController = loader.getController();
+                Platform.runLater(() -> {
+                    try {
+                        ObservableList<ArticleTag> allTags = 
+                                FXCollections.observableList(AppConfig.getInstance()
+                                        .getDatabase().getAllTags());
+                        // allTags - articleTags is the initial value to the left list
+                        this.displayedArticle.get().getArticleSummary().getTags()
+                                .stream().forEach((tag) -> {
+                            allTags.remove(tag);
+                        });
+                        // The left list is now allTags.
+                        // The right is the tag list from displayedArticle, which requires
+                        // bidirectional bindings.
+                        tagsController.getListTags().setItems(allTags);
+                        tagsController.getListArticleTags().itemsProperty()
+                                .bindBidirectional(this.displayedArticle.get()
+                                        .getArticleSummaryProperty().tagsProperty());
+                    } catch (SQLException ex) {
+                        UIUtils.errorAlert("Error trying to fetch tags", "Database error");
+                    } finally {
+                        scene.cursorProperty().set(Cursor.DEFAULT);
+                    }
+                });
+                stage.show();
+            } catch (IOException ex) {
+                UIUtils.errorAlert("Unexpected error loading the tags window", AppConfig.APP_TITLE);
+            }
+        }
     }
     
     @FXML
