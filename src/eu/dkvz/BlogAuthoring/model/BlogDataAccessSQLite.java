@@ -224,6 +224,8 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         String[] tagsA = null;
         if (tags != null && !tags.isEmpty()) {
             tagsA = tags.split(",");
+            // TODO: I should use StringBuilder here instead
+            // of recreating a String at every concat.
             sql = sql.concat(", tags, article_tags");
             if (published) {
                 sql = sql.concat(" WHERE articles.published = 1");
@@ -336,7 +338,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
                 tagsStmt.setLong(2, tag.getId());
                 tagsStmt.addBatch();
             }
-            stmt.executeBatch();
+            tagsStmt.executeBatch();
         }
         return true;
     }

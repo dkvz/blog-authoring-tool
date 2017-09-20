@@ -9,6 +9,7 @@ import eu.dkvz.BlogAuthoring.model.*;
 import java.io.*;
 import java.sql.*;
 import javafx.stage.*;
+import javafx.scene.image.*;
 
 /**
  *
@@ -19,9 +20,11 @@ public class AppConfig {
     private static final AppConfig INSTANCE = new AppConfig();
     public static final String DB_PATH = "db.sqlite";
     public static final String APP_TITLE = "Blog Authoring Thingy";
+    public static final String IMAGE_BASE_URL = "wp-content/stuff/";
     
     private Stage primaryStage = null;
     private BlogDataAccess database = null;
+    private Image applicationIcon = null;
     
     private AppConfig() {
         
@@ -70,6 +73,20 @@ public class AppConfig {
      */
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    /**
+     * @return the applicationIcon
+     */
+    public Image getApplicationIcon() {
+        return applicationIcon;
+    }
+
+    /**
+     * @param applicationIcon the applicationIcon to set
+     */
+    public void setApplicationIcon(Image applicationIcon) {
+        this.applicationIcon = applicationIcon;
     }
     
 }

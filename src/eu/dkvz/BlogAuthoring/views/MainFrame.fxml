@@ -95,7 +95,7 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
-                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="false">
+                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="true">
                      <graphic>
                         <FontAwesomeIconView glyphName="WARNING" size="20" />
                      </graphic>

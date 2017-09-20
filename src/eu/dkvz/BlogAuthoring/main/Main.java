@@ -13,6 +13,7 @@ import javafx.stage.*;
 import javafx.scene.*;
 import java.sql.*;
 import eu.dkvz.BlogAuthoring.utils.*;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -43,6 +44,11 @@ public class Main extends Application {
             e.consume();
             controller.requestExit();
         });
+        Image appIcon = new Image(getClass().getClassLoader().getResourceAsStream("images/icon64x64.png"));
+        if (appIcon != null) {
+            AppConfig.getInstance().setApplicationIcon(appIcon);
+            stage.getIcons().add(appIcon);
+        }
         stage.setTitle(AppConfig.APP_TITLE);
         stage.setScene(scene);
         stage.show();

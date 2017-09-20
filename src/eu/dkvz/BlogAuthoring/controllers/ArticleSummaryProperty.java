@@ -35,10 +35,11 @@ public class ArticleSummaryProperty extends ArticleSummary {
     public ArticleSummaryProperty() {
         super();
         this.idProperty.set(-1);
+        this.tags.set(FXCollections.observableArrayList());
     }
     
     public ArticleSummaryProperty(ArticleSummary sum) {
-        this();
+        super();
         this.setArticleURL(sum.getArticleURL());
         super.setAuthor(sum.getAuthor());
         super.setCommentsCount(sum.getCommentsCount());

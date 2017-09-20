@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}This program is free software.
+${licensePrefix}I don't understand anything about licenses.
+<#if licenseLast??>
+${licenseLast}
+</#if>

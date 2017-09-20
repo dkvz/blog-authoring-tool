@@ -12,7 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import eu.dkvz.BlogAuthoring.model.*;
-import eu.dkvz.BlogAuthoring.utils.UIUtils;
+import eu.dkvz.BlogAuthoring.utils.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import javafx.application.Platform;
@@ -21,6 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.*;
 import javafx.collections.*;
 import javafx.scene.*;
+import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -72,7 +73,6 @@ public class MainFrameController implements Initializable {
     @FXML
     private Button buttonDeleteArticle;
     
-    //private DisplayedArticle displayedArticle;
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
     private final BooleanProperty newArticle = new SimpleBooleanProperty();
@@ -165,13 +165,18 @@ public class MainFrameController implements Initializable {
                     // I hope this actually resets the binding that clicking
                     // "new" previously might have set.
                     // Also I'm doing this with bidirectionnal bindings.
-                    this.textFieldArticleURL.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummary().articleURLProperty());
-                    this.textFieldThumbImage.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummary().thumbImageProperty());
-                    this.textFieldTitle.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummary().titleProperty());
-                    this.textAreaArticle.textProperty().bindBidirectional(this.displayedArticle.get().contentProperty());
-                    this.textAreaArticleSummary.textProperty().bindBidirectional(this.displayedArticle.get().getArticleSummaryProperty().summaryProperty());
-                    this.toggleButtonPublished.setSelected(this.displayedArticle.get().getArticleSummary().isPublished());
-                    
+                    this.textFieldArticleURL.textProperty().bindBidirectional(this.displayedArticle
+                            .get().getArticleSummary().articleURLProperty());
+                    this.textFieldThumbImage.textProperty().bindBidirectional(this.displayedArticle
+                            .get().getArticleSummary().thumbImageProperty());
+                    this.textFieldTitle.textProperty().bindBidirectional(this.displayedArticle
+                            .get().getArticleSummary().titleProperty());
+                    this.textAreaArticle.textProperty().bindBidirectional(this.displayedArticle
+                            .get().contentProperty());
+                    this.textAreaArticleSummary.textProperty().bindBidirectional(this.displayedArticle
+                            .get().getArticleSummaryProperty().summaryProperty());
+                    this.toggleButtonPublished.setSelected(this.displayedArticle
+                            .get().getArticleSummary().isPublished());
                     // Set the bindings to the modified state if not done yet.
                     if (!this.isModifiedBindingsSet()) {
                         this.setModifiedBindings();
@@ -326,7 +331,42 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonImageAction(ActionEvent event) {
-        
+        // Open the dedicated frame for this.
+        // Modally. Much easier that way.
+        // No sense in doing this if we're not either
+        // writing a new article or editing one.
+        if (this.displayedArticle.get() != null) {
+            try {
+                TextArea target = null;
+                if (this.textAreaArticleSummary.isFocused()) {
+                    target = this.textAreaArticleSummary;
+                } else if (this.textAreaArticle.isFocused()) {
+                    target = this.textAreaArticle;
+                } else {
+                    UIUtils.warningAlert("Please select the article content or summary first", AppConfig.APP_TITLE);
+                    return;
+                }
+                FXMLLoader loader = new FXMLLoader(getClass()
+                        .getResource("/eu/dkvz/BlogAuthoring/views/EmbedImageFrame.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.initOwner(AppConfig.getInstance().getPrimaryStage());
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Add Image");
+                Image icon = AppConfig.getInstance().getApplicationIcon();
+                if (icon != null) {
+                    stage.getIcons().add(icon);
+                }
+                EmbedImageFrameController imageController = loader.getController();
+                // Check if one of the TextArea has focus.
+                imageController.setTextAreaTarget(target);
+                stage.show();
+            } catch (IOException ex) {
+                UIUtils.errorAlert("Unexpected error loading the embed image window", AppConfig.APP_TITLE);
+            }
+        }
     }
     
     @FXML
@@ -376,6 +416,10 @@ public class MainFrameController implements Initializable {
                 stage.initOwner(AppConfig.getInstance().getPrimaryStage());
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setTitle("Edit Article Tags");
+                Image icon = AppConfig.getInstance().getApplicationIcon();
+                if (icon != null) {
+                    stage.getIcons().add(icon);
+                }
                 TagsFrameController tagsController = loader.getController();
                 Platform.runLater(() -> {
                     try {
@@ -394,6 +438,14 @@ public class MainFrameController implements Initializable {
                         tagsController.getListArticleTags().itemsProperty()
                                 .bindBidirectional(this.displayedArticle.get()
                                         .getArticleSummaryProperty().tagsProperty());
+                        List<ArticleTag> initialTags = new ArrayList<>();
+                        // Actually I kinda forgot we needed to keep record of the initial state
+                        // somehwere to reload that when the user cancels the tags operations.
+                        // We could reload from database but I'd rather limit the risk of getting
+                        // exceptions.
+                        initialTags.addAll(this.displayedArticle.get().getArticleSummary().getTags());
+                        tagsController.setInitialTags(initialTags);
+                        this.setModified(true);
                     } catch (SQLException ex) {
                         UIUtils.errorAlert("Error trying to fetch tags", "Database error");
                     } finally {
@@ -409,17 +461,8 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonDontClickAction(ActionEvent event) {
-        try {
-            Article art = AppConfig.getInstance().getDatabase().getArticleById(41l);
-            if (art != null) {
-                UIUtils.infoAlert("We got article " + art.getArticleSummary().getTitle(), AppConfig.APP_TITLE);
-            } else {
-                // Not found.
-                UIUtils.errorAlert("Article not found.", "Not found error");
-            }
-        } catch (SQLException ex) {
-            UIUtils.errorAlert("SQL error: " + ex.getMessage(), "SQL Error");
-        }
+        String test = Integer.toString(this.textAreaArticle.getCaretPosition());
+        UIUtils.infoAlert(test, test);
     }
     
     @FXML
