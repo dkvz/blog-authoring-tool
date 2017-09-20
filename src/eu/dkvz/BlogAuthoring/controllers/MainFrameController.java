@@ -81,6 +81,7 @@ public class MainFrameController implements Initializable {
     private boolean ignoreNextListSelection = false;
     private final BooleanProperty mandatoryFieldsNotFilled = new SimpleBooleanProperty();
     private Stage tagsWindow = null;
+    private TextArea lastFocusedTextArea = null;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -150,6 +151,15 @@ public class MainFrameController implements Initializable {
             } else {
                 this.ignoreNextListSelection = false;
             }
+        });
+        // Register the focus listener to know to which TextArea we are supposed to add stuff:
+        this.textAreaArticle.focusedProperty().addListener((ObservableValue<? extends Boolean> e, 
+                Boolean o, Boolean n) -> {
+            this.setLastFocusedTextArea(this.textAreaArticle);
+        });
+        this.textAreaArticleSummary.focusedProperty().addListener((ObservableValue<? extends Boolean> e, 
+                Boolean o, Boolean n) -> {
+            this.setLastFocusedTextArea(this.textAreaArticleSummary);
         });
         // Now I need some kind of thread to (re)load the article list.
         this.loadArticleList(null);
@@ -461,8 +471,11 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonDontClickAction(ActionEvent event) {
-        String test = Integer.toString(this.textAreaArticle.getCaretPosition());
-        UIUtils.infoAlert(test, test);
+        // I can use a focus owner listener (on the scene) or two different 
+        // focus listeners to check which of the text area was last.
+        this.buttonNewArticle.getScene().focusOwnerProperty().addListener((e, o, n) -> {
+            UIUtils.infoAlert(n.getId(), "Focus owner changed");
+        });
     }
     
     @FXML
@@ -630,6 +643,20 @@ public class MainFrameController implements Initializable {
     
     public BooleanProperty mandatoryFieldsNotFilledProperty() {
         return this.mandatoryFieldsNotFilled;
+    }
+
+    /**
+     * @return the lastFocusedTextArea
+     */
+    public TextArea getLastFocusedTextArea() {
+        return lastFocusedTextArea;
+    }
+
+    /**
+     * @param lastFocusedTextArea the lastFocusedTextArea to set
+     */
+    public void setLastFocusedTextArea(TextArea lastFocusedTextArea) {
+        this.lastFocusedTextArea = lastFocusedTextArea;
     }
     
 }
