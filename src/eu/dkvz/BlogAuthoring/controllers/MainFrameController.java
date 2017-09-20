@@ -72,6 +72,8 @@ public class MainFrameController implements Initializable {
     private CheckMenuItem checkMenuItemWordWrap;
     @FXML
     private Button buttonDeleteArticle;
+    @FXML
+    private MenuItem menuItemSave;
     
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
@@ -94,6 +96,7 @@ public class MainFrameController implements Initializable {
         // (which all means displayedArticle holds a null value in its property)
         this.vBoxArticleForm.visibleProperty().bind(this.displayedArticle.isNotNull());
         this.buttonSave.disableProperty().bind(this.displayedArticle.isNull());
+        this.menuItemSave.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonReload.disableProperty().bind(this.displayedArticle.isNull().or(this.newArticleProperty()));
         this.buttonDeleteArticle.disableProperty().bind(this.displayedArticle.isNull().or(this.newArticleProperty()));
         this.toggleButtonPublished.disableProperty().bind(this.displayedArticle.isNull());
@@ -114,6 +117,7 @@ public class MainFrameController implements Initializable {
                     .or(this.textFieldUserID.textProperty().isEmpty()));
             this.buttonSave.disableProperty().bind(this.displayedArticle.isNull()
                     .or(this.mandatoryFieldsNotFilled));
+            this.menuItemSave.disableProperty().bind(this.buttonSave.disableProperty());
         });
         
         // Bind the word wrap thingy:
@@ -270,6 +274,11 @@ public class MainFrameController implements Initializable {
     }
     
     @FXML
+    private void menuItemSaveAction(ActionEvent event) {
+        
+    }
+    
+    @FXML
     private synchronized void buttonSaveAction(ActionEvent event) {
         // The user ID, author, User object or whatever won't be present
         // in the bindings for new articles. I have to set the value manually.
@@ -347,15 +356,6 @@ public class MainFrameController implements Initializable {
         // writing a new article or editing one.
         if (this.displayedArticle.get() != null) {
             try {
-                TextArea target = null;
-                if (this.textAreaArticleSummary.isFocused()) {
-                    target = this.textAreaArticleSummary;
-                } else if (this.textAreaArticle.isFocused()) {
-                    target = this.textAreaArticle;
-                } else {
-                    UIUtils.warningAlert("Please select the article content or summary first", AppConfig.APP_TITLE);
-                    return;
-                }
                 FXMLLoader loader = new FXMLLoader(getClass()
                         .getResource("/eu/dkvz/BlogAuthoring/views/EmbedImageFrame.fxml"));
                 Parent root = loader.load();
@@ -371,7 +371,7 @@ public class MainFrameController implements Initializable {
                 }
                 EmbedImageFrameController imageController = loader.getController();
                 // Check if one of the TextArea has focus.
-                imageController.setTextAreaTarget(target);
+                imageController.setTextAreaTarget(this.lastFocusedTextArea);
                 stage.show();
             } catch (IOException ex) {
                 UIUtils.errorAlert("Unexpected error loading the embed image window", AppConfig.APP_TITLE);
@@ -397,7 +397,7 @@ public class MainFrameController implements Initializable {
     public void requestExit() {
         if (this.isModified()) {
             if (!UIUtils.confirmDialog("You're about to close the application, this "
-                    + "will make you lose any pending modifications. \nAre you sure?"
+                    + "will make you lose any pending modifications. Are you sure?"
                     , "Exit application")) {
                 return;
             }

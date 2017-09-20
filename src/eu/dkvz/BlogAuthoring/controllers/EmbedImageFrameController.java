@@ -57,7 +57,24 @@ public class EmbedImageFrameController implements Initializable {
     private void buttonAddAction(ActionEvent event) {
         // Add the code at the current carret position.
         if (this.textAreaTarget != null) {
-            
+            BlocsGenerator bg = new BlocsGenerator(AppConfig.IMAGE_BASE_URL);
+            int align;
+            // Normally the first if should be the default option.
+            // You know, for CPU cycles.
+            if (this.radioButtonCenter.isSelected()) {
+                align = BlocsGenerator.ALIGN_CENTER;
+            } else if (this.radioButtonLeft.isSelected()) {
+                align = BlocsGenerator.ALIGN_LEFT;
+            } else {
+                align = BlocsGenerator.ALIGN_RIGHT;
+            }
+            String img = bg.generateImageCode(this.textFieldImageURL.getText(), 
+                    this.textFieldMiniatureURL.getText(), 
+                    this.textFieldAltText.getText(), 
+                    this.textFieldWidth.getText(), 
+                    this.textFieldHeight.getText(), 
+                    this.textFieldLegend.getText(), align) + "\n";
+            this.textAreaTarget.insertText(this.textAreaTarget.getCaretPosition(), img);
         }
         this.closeWindow();
     }
