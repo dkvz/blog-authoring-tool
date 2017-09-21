@@ -39,6 +39,7 @@
                               <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
                         </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#menuItemReloadArticleListAction" text="Reload article list" />
                     <MenuItem mnemonicParsing="false" onAction="#menuItemQuitAction" text="Quit">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -63,6 +64,7 @@
                   <Menu mnemonicParsing="false" text="Tools">
                      <items>
                         <CheckMenuItem fx:id="checkMenuItemUpdatePostDate" mnemonicParsing="false" text="Update post date" />
+                        <MenuItem fx:id="menuItemArticleID" mnemonicParsing="false" onAction="#menuItemArticIeIDAction" text="Change article ID..." />
                      </items>
                   </Menu>
               </menus>

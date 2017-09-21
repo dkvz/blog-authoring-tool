@@ -384,7 +384,7 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         // We need to get the current tags first.
         // We're not doing any checks as if these tags actually exist and all that.
         List<ArticleTag> currentTags = this.getTagsForArticle(article.getArticleSummary().getId());
-        if (currentTags != null && currentTags.size() > 0) {
+        if (currentTags != null) {
             // We had tags before.
             for (ArticleTag tag: currentTags) {
                 if (!article.getArticleSummary().getTags().contains(tag)) {
@@ -443,7 +443,30 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
         return ret;
     }
     
-    /**
+    @Override
+    public boolean changeArticleId(long previousId, long newId) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("UPDATE articles SET id = ? WHERE id = ?");
+        stmt.setLong(1, newId);
+        stmt.setLong(2, previousId);
+        int affected = stmt.executeUpdate();
+        if (affected <= 0) {
+            return false;
+        }
+        // Also update tags:
+        this.updateTagsArticleId(previousId, newId);
+        return true;
+    }
+    
+    private void updateTagsArticleId(long previousId, long newId) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("UPDATE article_tags SET "
+                + "article_id = ? WHERE article_id = ?");
+        stmt.setLong(1, newId);
+        stmt.setLong(2, previousId);
+        int affected = stmt.executeUpdate();
+        System.out.println("Affected rows for tag update: " + Integer.toString(affected));
+    }
+    
+     /**
      * @return the filename
      */
     public String getFilename() {
@@ -456,6 +479,5 @@ public class BlogDataAccessSQLite extends BlogDataAccess {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-
 
 }

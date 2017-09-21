@@ -76,6 +76,8 @@ public class MainFrameController implements Initializable {
     private MenuItem menuItemSave;
     @FXML
     private CheckMenuItem checkMenuItemUpdatePostDate;
+    @FXML
+    private MenuItem menuItemArticleID;
     
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
@@ -105,6 +107,7 @@ public class MainFrameController implements Initializable {
         this.buttonImage.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonQuote.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonCode.disableProperty().bind(this.displayedArticle.isNull());
+        this.menuItemArticleID.disableProperty().bind(this.displayedArticle.isNull().or(this.newArticleProperty()));
         this.selectedArticle.bind(this.listViewArticles.getSelectionModel().selectedItemProperty());
         
         Platform.runLater(() -> {
@@ -135,7 +138,13 @@ public class MainFrameController implements Initializable {
                 // - We have used one of the text fields since the last loading of them
                 //   -> Which is a problem because the article text and summary
                 //   are not in the list anywhere.
-                if ((oldVal != null && newVal != null)
+                if (this.isNewArticle() && this.isModified()) {
+                    if (!UIUtils.confirmDialog("The current article has not been saved. "
+                            + "Loading another one will delete what you were writing. Are you sure? \n"
+                            + "This operation cannot be undone.", "Cancel modifications?")) {
+                        return;
+                    }
+                } else if ((oldVal != null && newVal != null)
                         && (oldVal.getId() != newVal.getId())
                         && this.isModified()) {
                     if (!UIUtils.confirmDialog("Loading another article will cancel all the "
@@ -593,6 +602,58 @@ public class MainFrameController implements Initializable {
                 UIUtils.warningAlert("There is nothing to delete here (??)", AppConfig.APP_TITLE);
             }
         }
+    }
+    
+    @FXML
+    private synchronized void menuItemArticIeIDAction(ActionEvent event) {
+        // Changing the article ID is kinda weird but that's how I can reorder my
+        // articles to be published, since the website backend uses the ID to order
+        // the articles.
+        long previousId = this.displayedArticle.get().getArticleSummary().getId();
+        if (this.displayedArticle.get() != null && 
+                previousId >= 0) {
+            String newId = UIUtils.inputDialog("Enter new (unused) ID: \n"
+                    + "(This is advanced stuff alright) \n"
+                    + "The articles won't be re-ordered \n"
+                    + "unless you reload the list from \n"
+                    + "the Files menu", "Change article ID", 
+                    Long.toString(previousId));
+            if (newId != null) {
+                try {
+                    long newIdL = Long.parseLong(newId);
+                    // Check if it already exists:
+                    Article art = AppConfig.getInstance().getDatabase().getArticleById(newIdL);
+                    if (art == null) {
+                        if (AppConfig.getInstance().getDatabase().changeArticleId(previousId, newIdL)) {
+                            // If the query succeeded we need to update the item in the article list.
+                            // Although modifying displayedArticle could suffice.
+                            // No it doesn't I guess that's because it's not a bound property thing.
+                            // If I reload the article list, I'm going to have to re-select the
+                            // article, which will cancel all changes.
+                            //this.loadArticleList(this.displayedArticle.get().getArticleSummary());
+                            int index = this.listViewArticles.getItems().indexOf(displayedArticle.get().getArticleSummary());
+                            if (index >= 0) {
+                                this.listViewArticles.getItems().get(index).setId(newIdL);
+                            }
+                            this.displayedArticle.get().getArticleSummary().setId(newIdL);
+                            this.labelStatus.setText("Article ID changed to " + Long.toString(newIdL));
+                        }
+                    } else {
+                        UIUtils.infoAlert("This article ID already exists.", AppConfig.APP_TITLE);
+                    }
+                } catch (NumberFormatException ex) {
+                    UIUtils.warningAlert("Invalid new ID.", "New Article ID");
+                } catch (SQLException ex) {
+                    UIUtils.errorAlert("Could not change the id, database error: " + ex.getMessage(), 
+                            "Database error");
+                }
+            }
+        }
+    }
+    
+    @FXML
+    private synchronized void menuItemReloadArticleListAction(ActionEvent event) {
+        this.loadArticleList(null);
     }
 
     /**

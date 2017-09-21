@@ -44,6 +44,19 @@ public final class UIUtils {
         return result.get() == ButtonType.OK;
     }
     
+    public static String inputDialog(String message, String title, String defaultValue) {
+        TextInputDialog dialog = new TextInputDialog(defaultValue);
+        dialog.setTitle(title);
+        dialog.setHeaderText("");
+        dialog.setContentText(message);
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            return result.get();
+        } else {
+            return null;
+        }
+    }
+    
     public static void insertBlocAtCaret(TextInputControl textField, String bloc) {
         // We could check if there's a selection and erase it.
         textField.insertText(textField.getCaretPosition(), bloc);

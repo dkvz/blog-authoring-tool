@@ -27,5 +27,6 @@ public abstract class BlogDataAccess {
     public abstract boolean updateArticle(Article article) throws SQLException;
     public abstract boolean deleteArticleById(long id) throws SQLException;
     public abstract List<ArticleTag> getTagsForArticle(long id) throws SQLException;
+    public abstract boolean changeArticleId(long previousId, long newId) throws SQLException;
     
 }
