@@ -60,6 +60,11 @@
                         <CheckMenuItem fx:id="checkMenuItemWordWrap" mnemonicParsing="false" selected="true" text="Word Wrap" />
                      </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Tools">
+                     <items>
+                        <CheckMenuItem fx:id="checkMenuItemUpdatePostDate" mnemonicParsing="false" text="Update post date" />
+                     </items>
+                  </Menu>
               </menus>
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">

@@ -80,6 +80,23 @@ public class BlocsGenerator {
         sb.append("</div>");
         return sb.toString();
     }
+    
+    // Super cringy methods in here
+    public String generateQuoteBefore() {
+        return "<blockquote>\n";
+    }
+    
+    public String generateQuoteAfter() {
+        return "\n</blockquote>";
+    }
+    
+    public String generateCodeBefore() {
+        return "<pre class=\"screen\">\n";
+    }
+    
+    public String generateCodeAfter() {
+        return "\n</pre>";
+    }
 
     private String addBaseURL(String value) {
         if (this.getImageBaseURL() != null && !this.getImageBaseURL().isEmpty()) {

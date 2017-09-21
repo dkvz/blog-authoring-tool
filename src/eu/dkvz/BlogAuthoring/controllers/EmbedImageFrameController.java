@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import eu.dkvz.BlogAuthoring.utils.*;
 import eu.dkvz.BlogAuthoring.main.*;
+import javafx.application.Platform;
 
 /**
  * FXML Controller class
@@ -74,7 +75,10 @@ public class EmbedImageFrameController implements Initializable {
                     this.textFieldWidth.getText(), 
                     this.textFieldHeight.getText(), 
                     this.textFieldLegend.getText(), align) + "\n";
-            this.textAreaTarget.insertText(this.textAreaTarget.getCaretPosition(), img);
+            UIUtils.insertBlocAtCaret(this.textAreaTarget, img);
+            Platform.runLater(() -> {
+                this.textAreaTarget.requestFocus();
+            });
         }
         this.closeWindow();
     }

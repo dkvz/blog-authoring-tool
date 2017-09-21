@@ -74,6 +74,8 @@ public class MainFrameController implements Initializable {
     private Button buttonDeleteArticle;
     @FXML
     private MenuItem menuItemSave;
+    @FXML
+    private CheckMenuItem checkMenuItemUpdatePostDate;
     
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
@@ -275,7 +277,7 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void menuItemSaveAction(ActionEvent event) {
-        
+        this.buttonSaveAction(event);
     }
     
     @FXML
@@ -319,6 +321,9 @@ public class MainFrameController implements Initializable {
                     // Updating existing article:
                     try {
                         this.displayedArticle.get().getArticleSummary().getUser().setId(Long.parseLong(this.textFieldUserID.getText()));
+                        if (this.checkMenuItemUpdatePostDate.isSelected()) {
+                            this.displayedArticle.get().getArticleSummary().setDate(null);
+                        }
                         if (AppConfig.getInstance().getDatabase().updateArticle(this.displayedArticle.get())) {
                             this.labelStatus.setText("Updated article " + Long.toString(this.displayedArticle.get().getArticleSummary().getId()));
                             this.setModified(false);
@@ -381,12 +386,18 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonQuoteAction(ActionEvent event) {
-        
+        // This is really weird code.
+        BlocsGenerator bg = new BlocsGenerator();
+        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, bg.generateQuoteBefore(), bg.generateQuoteAfter());
+        this.lastFocusedTextArea.requestFocus();
     }
     
     @FXML
     private void buttonCodeAction(ActionEvent event) {
-        
+        // This is really weird code.
+        BlocsGenerator bg = new BlocsGenerator();
+        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, bg.generateCodeBefore(), bg.generateCodeAfter());
+        this.lastFocusedTextArea.requestFocus();
     }
     
     @FXML
@@ -473,9 +484,7 @@ public class MainFrameController implements Initializable {
     private void buttonDontClickAction(ActionEvent event) {
         // I can use a focus owner listener (on the scene) or two different 
         // focus listeners to check which of the text area was last.
-        this.buttonNewArticle.getScene().focusOwnerProperty().addListener((e, o, n) -> {
-            UIUtils.infoAlert(n.getId(), "Focus owner changed");
-        });
+        UIUtils.infoAlert(Integer.toString(this.textAreaArticle.getAnchor()) + " caret: " + Integer.toString(this.textAreaArticle.getCaretPosition()), "");
     }
     
     @FXML
