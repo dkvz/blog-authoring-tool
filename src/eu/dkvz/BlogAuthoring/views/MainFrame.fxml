@@ -12,6 +12,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -59,6 +60,9 @@
                   <Menu mnemonicParsing="false" text="View">
                      <items>
                         <CheckMenuItem fx:id="checkMenuItemWordWrap" mnemonicParsing="false" selected="true" text="Word Wrap" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuItemIncreaseFontSizeAction" text="Increase font size" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuItemDecreaseFontSizeAction" text="Decrease font size" />
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Tools">
@@ -107,7 +111,7 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
-                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="true">
+                  <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="false">
                      <graphic>
                         <FontAwesomeIconView glyphName="WARNING" size="20" />
                      </graphic>

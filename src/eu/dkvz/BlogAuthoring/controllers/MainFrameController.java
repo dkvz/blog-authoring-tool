@@ -23,6 +23,7 @@ import javafx.collections.*;
 import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -88,6 +89,7 @@ public class MainFrameController implements Initializable {
     private final BooleanProperty mandatoryFieldsNotFilled = new SimpleBooleanProperty();
     private Stage tagsWindow = null;
     private TextArea lastFocusedTextArea = null;
+    private SearchFrameController searchController = null;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -397,7 +399,8 @@ public class MainFrameController implements Initializable {
     private void buttonQuoteAction(ActionEvent event) {
         // This is really weird code.
         BlocsGenerator bg = new BlocsGenerator();
-        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, bg.generateQuoteBefore(), bg.generateQuoteAfter());
+        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, 
+                bg.generateQuoteBefore(), bg.generateQuoteAfter());
         this.lastFocusedTextArea.requestFocus();
     }
     
@@ -405,7 +408,8 @@ public class MainFrameController implements Initializable {
     private void buttonCodeAction(ActionEvent event) {
         // This is really weird code.
         BlocsGenerator bg = new BlocsGenerator();
-        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, bg.generateCodeBefore(), bg.generateCodeAfter());
+        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, 
+                bg.generateCodeBefore(), bg.generateCodeAfter());
         this.lastFocusedTextArea.requestFocus();
     }
     
@@ -427,7 +431,35 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void menuItemSearchAction(ActionEvent event) {
-        
+        // We'll keep the search window hidden once it was seen once.
+        // What we actually need to keep reference of is the controller.
+        if (this.displayedArticle.get() != null && this.lastFocusedTextArea != null) {
+            if (this.searchController == null) {
+                try {
+                    // Create the search window.
+                    FXMLLoader loader = new FXMLLoader(getClass()
+                            .getResource("/eu/dkvz/BlogAuthoring/views/SearchFrame.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    Stage stage = new Stage();
+                    stage.setScene(scene);
+                    stage.initOwner(AppConfig.getInstance().getPrimaryStage());
+                    stage.initModality(Modality.NONE);
+                    stage.setTitle("Edit Article Tags");
+                    Image icon = AppConfig.getInstance().getApplicationIcon();
+                    if (icon != null) {
+                        stage.getIcons().add(icon);
+                    }
+                    this.searchController = loader.getController();
+                    this.searchController.setSearchStage(stage);
+                } catch (IOException ex) {
+                    UIUtils.errorAlert("Unexpected error loading the search window", AppConfig.APP_TITLE);
+                    return;
+                }
+            }
+            this.searchController.setTarget(this.lastFocusedTextArea);
+            
+        }
     }
     
     @FXML
@@ -491,9 +523,20 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonDontClickAction(ActionEvent event) {
-        // I can use a focus owner listener (on the scene) or two different 
-        // focus listeners to check which of the text area was last.
-        UIUtils.infoAlert(Integer.toString(this.textAreaArticle.getAnchor()) + " caret: " + Integer.toString(this.textAreaArticle.getCaretPosition()), "");
+        double currentSize = this.textAreaArticle.getFont().getSize();
+        this.textAreaArticle.setFont(Font.font(currentSize + 1.0));
+    }
+    
+    @FXML
+    private void menuItemIncreaseFontSizeAction(ActionEvent event) {
+        this.textAreaArticle.setFont(Font.font(this.textAreaArticle.getFont().getSize() + 1.0));
+        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize() + 1.0));
+    }
+
+    @FXML
+    private void menuItemDecreaseFontSizeAction(ActionEvent event) {
+        this.textAreaArticle.setFont(Font.font(this.textAreaArticle.getFont().getSize() - 1.0));
+        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize() - 1.0));
     }
     
     @FXML
