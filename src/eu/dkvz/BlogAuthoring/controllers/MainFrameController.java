@@ -458,7 +458,7 @@ public class MainFrameController implements Initializable {
                 }
             }
             this.searchController.setTarget(this.lastFocusedTextArea);
-            
+            this.searchController.showFrame();
         }
     }
     
