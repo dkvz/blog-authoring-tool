@@ -44,7 +44,7 @@ public class SearchFrameController implements Initializable {
                 .bind(this.textFieldSearch.textProperty().isEmpty());
         this.buttonFindPrevious.disableProperty()
                 .bind(this.textFieldSearch.textProperty().isEmpty());
-    }    
+    }
 
     @FXML
     private void buttonFindNextAction(ActionEvent event) {
@@ -166,6 +166,7 @@ public class SearchFrameController implements Initializable {
     
     public void showFrame() {
         if (this.searchStage != null) {
+            this.textFieldSearch.requestFocus();
             this.searchStage.show();
         }
     }
