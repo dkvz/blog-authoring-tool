@@ -97,6 +97,22 @@ public class BlocsGenerator {
     public String generateCodeAfter() {
         return "\n</pre>";
     }
+    
+    public String generateAnchorBefore(String href, boolean blank) {
+        if (href == null) href = "";
+        StringBuilder sb = new StringBuilder("<a href=\"");
+        sb.append(href);
+        sb.append("\"");
+        if (blank) {
+            sb.append(" target=\"_blank\"");
+        }
+        sb.append(">");
+        return sb.toString();
+    }
+    
+    public String generateAnchorAfter() {
+        return "</a>";
+    }
 
     private String addBaseURL(String value) {
         if (this.getImageBaseURL() != null && !this.getImageBaseURL().isEmpty()) {

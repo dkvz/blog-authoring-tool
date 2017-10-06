@@ -79,6 +79,8 @@ public class MainFrameController implements Initializable {
     private CheckMenuItem checkMenuItemUpdatePostDate;
     @FXML
     private MenuItem menuItemArticleID;
+    @FXML
+    private Button buttonLink;
     
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
@@ -107,6 +109,7 @@ public class MainFrameController implements Initializable {
         this.buttonDeleteArticle.disableProperty().bind(this.displayedArticle.isNull().or(this.newArticleProperty()));
         this.toggleButtonPublished.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonImage.disableProperty().bind(this.displayedArticle.isNull());
+        this.buttonLink.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonQuote.disableProperty().bind(this.displayedArticle.isNull());
         this.buttonCode.disableProperty().bind(this.displayedArticle.isNull());
         this.menuItemArticleID.disableProperty().bind(this.displayedArticle.isNull().or(this.newArticleProperty()));
@@ -283,6 +286,11 @@ public class MainFrameController implements Initializable {
         
         Thread t = new Thread(regenArticles);
         t.start();
+        
+    }
+    
+    @FXML
+    private void buttonLinkAction(ActionEvent event) {
         
     }
     

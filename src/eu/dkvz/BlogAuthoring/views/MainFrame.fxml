@@ -111,6 +111,11 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE" size="20" />
                      </graphic></Button>
+                  <Button fx:id="buttonLink" mnemonicParsing="false" onAction="#buttonLinkAction" text="Link">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="LINK" size="20" />
+                     </graphic>
+                  </Button>
                   <Button mnemonicParsing="false" onAction="#buttonDontClickAction" text="DONT CLICK ME" visible="false">
                      <graphic>
                         <FontAwesomeIconView glyphName="WARNING" size="20" />
