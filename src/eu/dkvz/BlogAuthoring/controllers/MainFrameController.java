@@ -291,7 +291,29 @@ public class MainFrameController implements Initializable {
     
     @FXML
     private void buttonLinkAction(ActionEvent event) {
-        
+        if (this.displayedArticle.get() != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass()
+                        .getResource("/eu/dkvz/BlogAuthoring/views/LinkFrame.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.initOwner(AppConfig.getInstance().getPrimaryStage());
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Add Link");
+                Image icon = AppConfig.getInstance().getApplicationIcon();
+                if (icon != null) {
+                    stage.getIcons().add(icon);
+                }
+                LinkFrameController linkController = loader.getController();
+                // Check if one of the TextArea has focus.
+                linkController.setTarget(this.lastFocusedTextArea);
+                stage.show();
+            } catch (IOException ex) {
+                UIUtils.errorAlert("Unexpected error loading the embed image window", AppConfig.APP_TITLE);
+            }
+        }
     }
     
     @FXML
@@ -453,7 +475,7 @@ public class MainFrameController implements Initializable {
                     stage.setScene(scene);
                     stage.initOwner(AppConfig.getInstance().getPrimaryStage());
                     stage.initModality(Modality.NONE);
-                    stage.setTitle("Edit Article Tags");
+                    stage.setTitle("Search");
                     Image icon = AppConfig.getInstance().getApplicationIcon();
                     if (icon != null) {
                         stage.getIcons().add(icon);

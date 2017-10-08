@@ -47,7 +47,7 @@ public class LinkFrameController implements Initializable {
             UIUtils.surroundSelectionWithBloc(this.target, 
                 bg.generateAnchorBefore(this.textFieldHref.getText(), 
                 this.checkBoxOpenInNewTab.isSelected()), 
-                bg.generateQuoteAfter());
+                bg.generateAnchorAfter());
             // Request focus back to target:
             Platform.runLater(() -> {
                 this.target.requestFocus();
