@@ -113,6 +113,14 @@ public class BlocsGenerator {
     public String generateAnchorAfter() {
         return "</a>";
     }
+    
+    public static String generateParagraphBefore() {
+        return "<p>";
+    }
+    
+    public static String generateParagraphAfter() {
+        return "</p>";
+    }
 
     private String addBaseURL(String value) {
         if (this.getImageBaseURL() != null && !this.getImageBaseURL().isEmpty()) {

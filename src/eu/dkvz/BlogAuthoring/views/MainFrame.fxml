@@ -65,6 +65,15 @@
                         <MenuItem mnemonicParsing="false" onAction="#menuItemDecreaseFontSizeAction" text="Decrease font size" />
                      </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Insert">
+                    <items>
+                      <MenuItem fx:id="menuItemInsertP" mnemonicParsing="false" onAction="#menuItemInsertPAction" text="Insert Paragraph">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="ENTER" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                    </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Tools">
                      <items>
                         <CheckMenuItem fx:id="checkMenuItemUpdatePostDate" mnemonicParsing="false" text="Update post date" />

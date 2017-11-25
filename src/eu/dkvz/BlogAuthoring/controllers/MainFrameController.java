@@ -81,6 +81,8 @@ public class MainFrameController implements Initializable {
     private MenuItem menuItemArticleID;
     @FXML
     private Button buttonLink;
+    @FXML
+    private MenuItem menuItemInsertP;
     
     private final ObjectProperty<ArticleSummary> selectedArticle = new SimpleObjectProperty();
     private final ObjectProperty<ArticleProperty> displayedArticle = new SimpleObjectProperty<>();
@@ -560,13 +562,13 @@ public class MainFrameController implements Initializable {
     @FXML
     private void menuItemIncreaseFontSizeAction(ActionEvent event) {
         this.textAreaArticle.setFont(Font.font(this.textAreaArticle.getFont().getSize() + 1.0));
-        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize() + 1.0));
+        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize()));
     }
 
     @FXML
     private void menuItemDecreaseFontSizeAction(ActionEvent event) {
         this.textAreaArticle.setFont(Font.font(this.textAreaArticle.getFont().getSize() - 1.0));
-        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize() - 1.0));
+        this.textAreaArticleSummary.setFont(Font.font(this.textAreaArticle.getFont().getSize()));
     }
     
     @FXML
@@ -727,6 +729,14 @@ public class MainFrameController implements Initializable {
     @FXML
     private synchronized void menuItemReloadArticleListAction(ActionEvent event) {
         this.loadArticleList(null);
+    }
+    
+    @FXML
+    private void menuItemInsertPAction(ActionEvent event) {
+        UIUtils.surroundSelectionWithBloc(this.lastFocusedTextArea, 
+                BlocsGenerator.generateParagraphBefore(), 
+                BlocsGenerator.generateParagraphAfter());
+        this.lastFocusedTextArea.requestFocus();
     }
 
     /**
